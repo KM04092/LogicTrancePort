@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ 	<head>
+	    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+	    <title>GoogleMapsAPI</title>
+	    <script src="http://maps.google.com/maps?file=api&v=2.55&key=AIzaSyBpJT-0jx4IagKPW4ITMNme7lysCvQuWeU" type="text/javascript"></script>
+	    <script type="text/javascript">
+		    //<![CDATA[
+		    var map = null;
+		    var direction = null;
+		    var fr = 0;
+		    var to = 1;
+		    var rootMapTimer = null;
+
+		    var addressArray = new Array( // 住所を配列で
+			"東京都千代田区丸の内1",
+			"東京都新宿区新宿三丁目38-1",
+			"東京都港区高輪三丁目26-27");
+
+		    // 初期処理
+		    function load() {
+		      if (GBrowserIsCompatible()) {
+		        map = new GMap2(document.getElementById("map"));
+		        direction = new GDirections(map, document.getElementById("direction"));
+		        GEvent.addListener(direction, "load", onGDirectionsLoad);
+		        rootMap(fr,to); // 最初の検索
+		      }
+		    }
+
+		    // 次の検索
+		    function nextMap() {
+			    to += 1;
+			    if ( to == addressArray.length ) {
+			        fr += 1;
+			        if ( fr == addressArray.length - 1 ) {
+			            document.getElementById("status").innerHTML = "終了";
+			            return;
+			        }
+			        to = fr + 1;
+			    }
+			    rootMap(fr,to);
+	        }
+
+		    // 経路の検索
+		    function rootMap(fr,to) {
+		        document.getElementById("status").innerHTML = "検索中:" + fr + "→" + to ;
+		        direction.load("from: " + addressArray[fr] + " to: " + addressArray[to],{ "locale": "ja_JP" });
+		    }
+
+		    // 経路の検索完了
+		    function onGDirectionsLoad() {
+				var distance = direction.getDistance();
+				document.getElementById("result").innerHTML +=
+				addressArray[fr] + "→" + addressArray[to] + ":" + distance.meters + "m," + distance.html + "<br/>";
+				rootMapTimer = setTimeout("nextMap()",100); // 次の検索をタイマでセット
+		    }
+
+		    //]]>
+		    
+		    // コントロール追加
+		    function add() {
+		    	//no
+		    	var notarget=document.getElementById("nofield");
+				var notags=notarget.getElementsByTagName("div");
+				var nocount=notags.length;
+			    var div_no = document.createElement("div");
+			    div_no.innerHTML = '<label name="no">' + nocount + '</label>';
+			    var parent_no = document.getElementById("nofield");
+			    parent_no.appendChild(div_no);
+		    	//from
+			    var div_from = document.createElement("div");
+			    div_from.innerHTML = '<input type="text" value="ここから" name="from">';
+			    var parent_from = document.getElementById("fromfield");
+			    parent_from.appendChild(div_from);
+			    //to
+			    var div_to = document.createElement("div");
+			    div_to.innerHTML = '<input type="text" value="ここまで" name="to">';
+			    var parent_to = document.getElementById("tofield");
+			    parent_to.appendChild(div_to);
+			}
+	    </script>
+	</head>
+
+	<body onload="load()" onunload="GUnload()">
+		<button>実行</button>
+		<button onclick="add();">このボタンを押して動的にUIを追加！</button>
+		<div>
+			<div id="nofield"></div>
+			
+			<div id="fromfield"></div>
+			
+			<div id="tofield"></div>
+			
+		</div>
+		<span id="status"></span>
+		<div id="direction" style="width: 275px"></div><br>
+		<div id="map" style="width: 400px; height: 400px"></div><br/>
+		<span id="result"></span>
+	</body>
+</html>

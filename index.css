@@ -1,0 +1,67 @@
+﻿<style>
+body, html{
+	top: 0;
+	margin: 0 auto;
+	width: 100%;
+    font-family: Meiryo;
+	text-align: center;
+}
+
+#Pay {
+	font-weight: bold;
+    color: #ff0000;
+}
+
+#label1 {
+    display: none;
+}
+
+form {
+	width: 700px;
+	padding: 10px;
+	border: 2px solid #cccccc;
+}
+
+ul {
+	text-align: Left;
+}
+
+.accbox {
+	margin:0;
+    padding: 0;
+    max-width: 700px;
+}
+
+
+.accbox label {
+    display: block;
+    margin: 1.0px 0;
+    padding : 2px 3px;
+    color :#2f8fcf;
+    font-weight: bold;
+    background :#a4cbf3;
+    cursor :pointer;
+    transition: all 0.5s;
+}
+
+.accbox label:hover {
+    background :#85baef;
+}
+
+.accbox .accshow {
+    font-weight: lighter;
+	height: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: 0.8s;
+}
+
+.cssacc:checked + .accshow {
+    height: auto;
+    padding: 2px;
+    background: #eaeaea;
+    opacity: 1;
+	display: block
+}
+</style>
