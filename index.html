@@ -8113,7 +8113,7 @@
 					}
 				}
 			}
-			//Nameンプットイベント	
+			//Nameインプットイベント	
 			function NameToCodeAndAdress(obj,strCodeID,strAdressID){
 			    var NameValue = obj.value;
 			    for(let i = 0; i < ArrayName.length; i++) {
@@ -8139,6 +8139,7 @@
 						direction = new GDirections(map, document.getElementById("direction"));
 						GEvent.addListener(direction, "load", onGDirectionsLoad);
 						rootMap(fr,to); // 検索開始
+						document.getElementById("status").innerHTML = "GoogleMapAPI正常終了"
 					}
 					else {
 						document.getElementById("status").innerHTML = "エラー：GoogleMapApiが正常動作していません"
@@ -8159,7 +8160,41 @@
 				var time = direction.getDuration(); 
 				document.getElementById("distance").value = distance.meters //distance.html[km]
 				document.getElementById("time").value = Math.round(time.seconds/60)  //time.html[hm]
-				document.getElementById("status").innerHTML = "API正常終了"
+		    }
+		    // ICの検索
+		    function HiｇhWayFech() {
+		    	var outputarea = document.getElementById("direction");
+				var tbl = outputarea.getElementsByClassName("adp-directions").item(0);
+				var rows = tbl.getElementsByTagName("tr");				
+				var len = rows.length;
+				var highstart =""
+				var highend =""
+				for (var i=0; i<len; i++){
+					var cols = rows[i].getElementsByTagName("td");	
+					var collen = cols.length;
+					for (var ii=0; ii<collen; ii++){
+						var cacheNo = cols[ii].getAttribute("jstcache");
+						if(cacheNo == 64){
+							var cn = cols[ii].childNodes
+							var cnlen = cn.length
+							for (var iii=0; iii<cnlen; iii++){
+								var str = cn[iii].innerHTML
+								if ( str === null || str === undefined ){}
+								else{
+									if (str.indexOf("料金所") != -1) {
+										highend = str.replace("料金所","")
+										if (highstart == ""){
+											highstart = highend
+										}
+									}
+								}
+							}
+						}
+					}
+					
+				}
+				document.getElementById("highwaystart").value = highstart;
+				document.getElementById("highwayend").value = highend;
 		    }
 		    //計算実行ボタンイベント
 		    function Calcuration() {
@@ -8168,9 +8203,22 @@
 				var fuel = document.getElementById("ul1").value;
 				var csp = document.getElementById("ul2").value; 
 				var charge = document.getElementById("ul3").value;		
-				var total = Math.round(((distance/1000)/csp)*fuel + (time*charge));				
+				var total = Math.round(((distance/1000)/csp)*fuel + (time*charge));
+				document.getElementById("Paygas").value = Math.round((distance/1000)/csp*fuel);
+				document.getElementById("Paytime").value = Math.round(time*charge);		
+				document.getElementById("Payhigh").value = 0;
+				document.getElementById("Payother").value = 0
 				document.getElementById("Pay").innerHTML = total;
 				document.getElementById("status").innerHTML = "計算正常終了";
+		    }
+		    //再計算実行ボタンイベント
+		    function ReCalcuration() {
+		    	var Paygas = document.getElementById("Paygas").value; 
+				var Paytime = document.getElementById("Paytime").value;  	
+				var Payhigh = document.getElementById("Payhigh").value;
+				var Payother = document.getElementById("Payother").value; 
+				document.getElementById("Pay").innerHTML = Math.round(parseInt(Paygas) + parseInt(Paytime) + parseInt(Payhigh) + parseInt(Payother));
+				document.getElementById("status").innerHTML = "再計算正常終了";
 		    }
 	    </script>
 	</head>
@@ -8189,6 +8237,8 @@
 						<input type="text" id="AdressTo" value="" placeholder="住所">				
 					<li>
 						<input type="button" value="API実行" onclick=GoogleMapAPICheck("AdressFrom","AdressTo");>距離・時間取得
+					<li>
+						<input type="button" value="API実行" onclick=HiｇhWayFech();>高速道路取得（試行中）
 					<li>
 						<input type="button" value="計算実行" onclick=Calcuration();>運送費計算
 					
@@ -13607,9 +13657,16 @@
 		</div>
 		<br>
 		<div id="outputarea">
-			<label id="Pay">運送費</label><label>[yen]　※高速費のぞく</label><br>
+			<label id="Pay">運送費</label><label>[yen] </label><input type="button" value="金額補正" onclick=ReCalcuration();><br>
+			<input type="text" id="Paygas" placeholder="ガソリン費"><label>[yen]</label><br>
+			<input type="text" id="Paytime" placeholder="人件費"><label>[yen]</label><br>
+			<input type="text" id="Payhigh" placeholder="高速費"><label>[yen]</label><br>
+			<input type="text" id="Payother" placeholder="その他"><label>[yen]</label><br>
+			<br>
+			<label id="parameta">計算要素</label><br>
 			<input type="text" id="distance" placeholder="距離"><label>[m]</label><br>
-			<input type="text" id="time" placeholder="時間"><label>[min]</label><br><br>
+			<input type="text" id="time" placeholder="時間"><label>[min]</label><br>
+			<input type="text" id="highwaystart" placeholder="高速IC開始位置">～<input type="text" id="highwayend" placeholder="高速IC開始位置"><br><br>
 			<div id="status">status</div>
 			<div id="map" style="width: 700px; height: 400px"></div>
 			<div id="direction" style="width: 700px">direction</div>
