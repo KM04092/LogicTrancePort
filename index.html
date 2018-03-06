@@ -8206,11 +8206,22 @@
 				var total = Math.round(((distance/1000)/csp)*fuel + (time*charge));
 				document.getElementById("Paygas").value = Math.round((distance/1000)/csp*fuel);
 				document.getElementById("Paytime").value = Math.round(time*charge);		
+				getUserInfo();
 				document.getElementById("Payhigh").value = 0;
 				document.getElementById("Payother").value = 0
 				document.getElementById("Pay").innerHTML = total;
 				document.getElementById("status").innerHTML = "計算正常終了";
 		    }
+		    //xmlリクエスト
+		    function getUserInfo() {
+				var request = new XMLHttpRequest();
+				request.open('GET', 'http://kosoku.jp/api/route.php?f=渋谷&t=浜松&c=普通車', false);  // `false` makes the request synchronous
+				request.send(null);
+				
+				if (request.status === 200) {
+				  console.log(request.responseText);
+				}
+			};
 		    //再計算実行ボタンイベント
 		    function ReCalcuration() {
 		    	var Paygas = document.getElementById("Paygas").value; 
@@ -8236,9 +8247,9 @@
 						<input type="text" id="NameTo" autocomplete="on" list="Name" placeholder="名称" oninput=NameToCodeAndAdress(this,"CodeTo","AdressTo");>
 						<input type="text" id="AdressTo" value="" placeholder="住所">				
 					<li>
-						<input type="button" value="API実行" onclick=GoogleMapAPICheck("AdressFrom","AdressTo");>距離・時間取得
+						<input type="button" value="距離・時間情報取得" onclick=GoogleMapAPICheck("AdressFrom","AdressTo");>
 					<li>
-						<input type="button" value="API実行" onclick=HiｇhWayFech();>高速道路取得（試行中）
+						<input type="button" value="高速道路情報取得" onclick=HiｇhWayFech();>（試行中）
 					<li>
 						<input type="button" value="計算実行" onclick=Calcuration();>運送費計算
 					
@@ -13657,16 +13668,27 @@
 		</div>
 		<br>
 		<div id="outputarea">
-			<label id="Pay">運送費</label><label>[yen] </label><input type="button" value="金額補正" onclick=ReCalcuration();><br>
-			<input type="text" id="Paygas" placeholder="ガソリン費"><label>[yen]</label><br>
-			<input type="text" id="Paytime" placeholder="人件費"><label>[yen]</label><br>
-			<input type="text" id="Payhigh" placeholder="高速費"><label>[yen]</label><br>
-			<input type="text" id="Payother" placeholder="その他"><label>[yen]</label><br>
+			<label id="Pay">運送費</label><label>[yen/one way] </label><input type="button" value="再計算" onclick=ReCalcuration();><br>
+			<input type="text" id="Paygas" placeholder="ガソリン費"><label>[yen/one way]</label><br>
+			<input type="text" id="Paytime" placeholder="人件費"><label>[yen/one way]</label><br>
+			<input type="text" id="Payhigh" placeholder="高速費"><label>[yen/one way]</label><br>
+			<input type="text" id="Payother" placeholder="その他"><label>[yen/one way]</label><br>
 			<br>
 			<label id="parameta">計算要素</label><br>
-			<input type="text" id="distance" placeholder="距離"><label>[m]</label><br>
-			<input type="text" id="time" placeholder="時間"><label>[min]</label><br>
-			<input type="text" id="highwaystart" placeholder="高速IC開始位置">～<input type="text" id="highwayend" placeholder="高速IC開始位置"><br><br>
+			<input type="text" id="distance" placeholder="距離"><label>[m/one way]</label><br>
+			<input type="text" id="time" placeholder="時間"><label>[min/one way]</label><br>
+			<input type="text" id="highwaystart" placeholder="高速IC開始位置">～<input type="text" id="highwayend" placeholder="高速IC開始位置">
+			<select name="c" id="car-type">
+				<option value="軽自動車等">軽自動車等</option>
+				<option value="普通車">普通車</option>
+				<option value="中型車" selected="">中型車</option>
+				<option value="大型車">大型車</option>
+				<option value="特大車">特大車</option>
+			</select>
+			<a href="https://kosoku.jp/">高速.jp</a>
+			<a href="http://kosoku.jp/api/route.php?f=渋谷&amp;t=浜松&amp;c=普通車">http://kosoku.jp/api/route.php?f=渋谷&amp;t=浜松&amp;c=中型車</a>
+			<br><br>
+			
 			<div id="status">status</div>
 			<div id="map" style="width: 700px; height: 400px"></div>
 			<div id="direction" style="width: 700px">direction</div>
