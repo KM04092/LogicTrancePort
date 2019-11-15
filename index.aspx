@@ -8294,7 +8294,7 @@
 					<li>
 						<input type="button" value="距離・時間情報取得" onclick=GoogleMapAPICheck("AdressFrom","AdressTo");>
 					<li>
-						<input type="button" value="高速道路料金取得" onclick=KosokuAPI();>（CROSSドメインなので保留中）
+						<input type="button" value="高速道路料金取得">【商用利用では費用が発生するため中止】<!--KosokuAPI()-->
 					<li>
 						<input type="button" value="計算実行" onclick=Calcuration();>
 					
@@ -13711,7 +13711,6 @@
 				</div>
 			</form>
 		</div>
-		<a href="https://maps.gsi.go.jp/">参考資料：国土交通省国土地理院</a>
 		<br>
 		<br>
 		<br>
